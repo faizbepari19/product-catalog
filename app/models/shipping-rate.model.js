@@ -9,6 +9,10 @@ module.exports = (sequelize, Sequelize) => {
         rate: {
             type: DataTypes.INTEGER,
             allowNull: false,
+        },
+        status: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: 1
         }
     }, {
         freezeTableName: true,

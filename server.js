@@ -27,6 +27,7 @@ db.sequelize.sync()
 
 
 require("./app/routes/product.routes")(app);
+require("./app/routes/shipping-rate.routes")(app);
 
 
 // set port, listen for requests
