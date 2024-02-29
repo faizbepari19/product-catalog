@@ -22,18 +22,14 @@ module.exports = (sequelize, Sequelize) => {
             type: DataTypes.STRING,
             allowNull: false,
         },
+        status: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: 1
+        }
     }, {
         freezeTableName: true,
         timestamps: false
     });
-
-    Product.getProductByName = (name) => {
-        return Product.findOne({
-            where: { name: name },
-            raw: true
-        })
-    }
-
 
     return Product;
 };

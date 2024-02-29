@@ -20,11 +20,5 @@ module.exports = (sequelize, Sequelize) => {
         timestamps: false
     });
 
-    SpecialOffer.getAll = () => {
-        return SpecialOffer.findAll({
-            raw: true
-        })
-    }
-
     return SpecialOffer;
 };

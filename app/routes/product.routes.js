@@ -3,7 +3,13 @@ const router = require("express").Router();
 
 module.exports = app => {
 
-  router.post("/calculate-invoice", products.getInvoice);
+    router.post('/', products.createProduct);
 
-  app.use('/api/product', router);
+    router.put('/:id', products.updateProduct);
+
+    router.delete('/:id', products.deleteProduct);
+
+    router.post("/calculate-invoice", products.getInvoice);
+
+    app.use('/api/product', router);
 };

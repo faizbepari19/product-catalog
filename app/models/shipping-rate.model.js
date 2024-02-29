@@ -15,11 +15,5 @@ module.exports = (sequelize, Sequelize) => {
         timestamps: false,
     });
 
-    ShippingRate.getAll = () => {
-        return ShippingRate.findAll({
-            raw: true
-        })
-    }
-
     return ShippingRate;
 };

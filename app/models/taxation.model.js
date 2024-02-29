@@ -15,12 +15,5 @@ module.exports = (sequelize, Sequelize) => {
         timestamps: false
     });
 
-    Taxation.getTax = () => {
-        return Taxation.findOne({
-            where: { tax_description: 'GST on all products' },
-            raw: true
-        })
-    }
-
     return Taxation;
 };
