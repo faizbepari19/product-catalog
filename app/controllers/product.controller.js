@@ -1,4 +1,5 @@
 const db = require("../models");
+const InvoiceCalculator = require('../services/invoice.service');
 
 const Product = db.products;
 const ShippingRate = db.shipping_rate;
@@ -42,22 +43,12 @@ module.exports = {
 
             console.log(shippingRate)
 
-            shippingFees = calculateShippingFees(productList, shippingRate.rate);
+            const invoiceCalculator = new InvoiceCalculator(productList, shippingRate, specialOffers, gstInfo);
+            const invoice = invoiceCalculator.generateInvoice();
 
-            // Apply special offers
-            const discount = calculateDiscount(productList, specialOffers);
+          
 
-            const gstAmount = (subtotal - discount + shippingFees) * (gstInfo.tax_percentage / 100);
-
-            const total = subtotal - discount + shippingFees + gstAmount;
-
-            res.json({
-                subtotal,
-                shippingFees,
-                gst: gstAmount,
-                discount,
-                total,
-            });
+            res.json(invoice);
 
         } catch (error) {
             console.error(error);
@@ -69,44 +60,3 @@ module.exports = {
 
 }
 
-function calculateShippingFees(products, rate) {
-
-    const totalWeight = products.reduce((sum, product) => sum + product.weight * product.quantity, 0);
-
-    return (totalWeight / 100) * rate;
-}
-
-function calculateDiscount(products, specialOffers) {
-    // Assume that only one offer is applicable at a time
-
-    const applicableOffer = specialOffers.find(offer => isOfferApplicable(products, offer));
-
-    if (applicableOffer) {
-        let percent = (applicableOffer.discount_percentage / 100);
-        let offeredAmt = calculateOfferedAmount(products);
-
-        return percent * offeredAmt;
-    }
-
-    return 0;
-
-}
-
-function isOfferApplicable(products, offer) {
-    if (!offer.minimum_quantity || products.length < offer.minimum_quantity) {
-        return false;
-    }
-
-    if (offer.product_type) {
-        const offerProducts = products.filter(product => product.type === offer.product_type);
-        return offerProducts.length >= offer.minimum_quantity;
-    }
-
-    return true;
-}
-
-function calculateOfferedAmount(products) {
-
-    return products.reduce((sum, product) => sum + product.price * product.quantity, 0);
-
-}
