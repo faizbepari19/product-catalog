@@ -1,22 +1,18 @@
 const express = require("express");
-const client = require('prom-client');
 
+const { monitorMetrics, getMetrics } = require('./app/middlewares/monitor')
 const dotenv = require("dotenv");
 dotenv.config();
 
 const app = express();
 
-const collectDefaultMetrics = client.collectDefaultMetrics;
-collectDefaultMetrics({ register: client.register })
 
 // parse requests of content-type - application/json
 app.use(express.json());
 
-app.get('/metrics', async (req, res) => {
-  res.setHeader('Contecnt-Type', client.register.contentType)
-  const metrics = await client.register.metrics()
-  res.send(metrics)
-})
+app.use(monitorMetrics)
+
+app.get('/metrics', getMetrics)
 
 const db = require("./app/models");
 

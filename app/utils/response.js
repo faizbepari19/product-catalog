@@ -1,3 +1,5 @@
+const logger = require('../middlewares/logger')
+
 class ApiResponse {
     constructor(success, message = null, data = null, error = null) {
         this.success = success;
@@ -11,6 +13,7 @@ class ApiResponse {
     }
 
     static error(err_message) {
+        logger.error(err_message);
         return new ApiResponse(false, null, null, { message: err_message });
     }
 }

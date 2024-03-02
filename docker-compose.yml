@@ -22,5 +22,10 @@ services:
     volumes:
       - grafana_data:/var/lib/grafana
 
+  loki:
+    image: grafana/loki
+    ports:
+      - 3100:3100
+
 volumes:
   grafana_data: 
