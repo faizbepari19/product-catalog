@@ -1,4 +1,5 @@
 const db = require('../models');
+const logger = require('../middlewares/logger');
 const ShippingRate = db.shipping_rate;
 
 class ShippingRateService {
@@ -17,8 +18,21 @@ class ShippingRateService {
     // Create a new shipping rate(s)
     async createRate(shippingData) {
         try {
-            const newRate = await ShippingRate.bulkCreate(shippingData);
-            return newRate;
+            const newItems = []
+            const promises = shippingData.map(async (record) => {
+                const [createdRecord, isCreated] = await ShippingRate.findOrCreate({
+                    where: { country: record.country, status: 1 },
+                    defaults: record
+                });
+
+                if (isCreated) {
+                    newItems.push(createdRecord);
+                }
+                logger.info('Shipping rate already present', createdRecord)
+                return createdRecord;
+            });
+            await Promise.all(promises);
+            return newItems;
         } catch (error) {
             throw new Error(`Error creating shipping rate: ${error.message}`);
         }
@@ -50,6 +64,15 @@ class ShippingRateService {
             return ShippingRate.findByPk(rateId);
         } catch (error) {
             throw new Error(`Error deleting shipping rate: ${error.message}`);
+        }
+    }
+
+    //Get shipping rate by ID
+    async getShippingRateByID(rateId) {
+        try {
+            return ShippingRate.findByPk(rateId);
+        } catch (error) {
+            throw new Error(`Error getting shipping rate: ${error.message}`);
         }
     }
 }
