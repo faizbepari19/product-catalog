@@ -21,7 +21,7 @@ module.exports = {
         try {
 
             const updatedItem = await ShippingRate.updateRate(req.params.id, req.body);
-            res.status(201).json(ApiResponse.success(updatedItem, 'Shipping rate updated!'))
+            res.status(200).json(ApiResponse.success(updatedItem, 'Shipping rate updated!'))
 
         } catch (error) {
             console.error(error);

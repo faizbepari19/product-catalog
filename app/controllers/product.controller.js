@@ -34,7 +34,7 @@ module.exports = {
         try {
 
             const updatedItem = await Product.updateProduct(req.params.id, req.body);
-            res.status(201).json(ApiResponse.success(updatedItem, 'Products updated!'))
+            res.status(200).json(ApiResponse.success(updatedItem, 'Products updated!'))
 
         } catch (error) {
             console.error(error);
