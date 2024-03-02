@@ -3,6 +3,9 @@ const ApiResponse = require('../utils/response');
 
 // Middleware for validating product creation request body
 const validateProductCreate = [
+    body('products').isArray().customSanitizer((value) =>
+        value.map((product) => trimObjectStrings(product))
+    ),
     body('products').custom((value) => {
         console.log('val', value)
         // Check if each item in the array has the required properties
@@ -24,16 +27,19 @@ const validateProductCreate = [
 // Middleware for validating product update
 const validateProductUpdate = [
     param('id').notEmpty().isNumeric().withMessage('Product ID missing'),
-    body('name').notEmpty().isString(),
+    body('name').trim().notEmpty().isString(),
     body('price').notEmpty().isNumeric(),
-    body('country').notEmpty().isString(),
+    body('country').trim().notEmpty().isString(),
     body('weight').notEmpty().isNumeric(),
-    body('type').notEmpty().isString(),
+    body('type').trim().notEmpty().isString(),
     handleValidationErrors,
 ];
 
 // Middleware for validating calculating invoice 
 const validateInvoice = [
+    body('products').isArray().customSanitizer((value) =>
+        value.map((product) => trimObjectStrings(product))
+    ),
     body('products').custom((value) => {
         // Check if each item in the array has the required properties
         if (!Array.isArray(value)) {
@@ -55,12 +61,15 @@ const validateInvoice = [
 // Middleware for validating shipping update
 const validateShippingRateUpdate = [
     param('id').notEmpty().isNumeric().withMessage('Rate ID missing'),
-    body('country').notEmpty().isString(),
+    body('country').trim().notEmpty().isString(),
     body('rate').notEmpty().isNumeric(),
     handleValidationErrors,
 ];
 
 const validateShippingRateCreate = [
+    body('rates').isArray().customSanitizer((value) =>
+        value.map((sp_rate) => trimObjectStrings(sp_rate))
+    ),
     body('rates').custom((value) => {
         // Check if each item in the array has the required properties
         if (!Array.isArray(value)) {
@@ -68,7 +77,7 @@ const validateShippingRateCreate = [
         }
 
         for (const sp_rate of value) {
-            if (!sp_rate.country || !sp_rate.rate ) {
+            if (!sp_rate.country || !sp_rate.rate) {
                 throw new Error('Invalid rates data in the array');
             }
         }
@@ -80,7 +89,7 @@ const validateShippingRateCreate = [
 
 
 // Middleware for validating deletes
-const validateDelete= [
+const validateDelete = [
     param('id').notEmpty().isNumeric().withMessage('ID is missing/invalid'),
     handleValidationErrors,
 ];
@@ -94,6 +103,17 @@ function handleValidationErrors(req, res, next) {
     }
     next();
 }
+
+const trimObjectStrings = (obj) => {
+    const trimmedObj = {};
+    for (const key in obj) {
+        if (key in obj) {
+            trimmedObj[key] = typeof obj[key] === 'string' ? obj[key].trim() : obj[key];
+        }
+    }
+    return trimmedObj;
+}
+
 
 module.exports = {
     validateProductCreate,

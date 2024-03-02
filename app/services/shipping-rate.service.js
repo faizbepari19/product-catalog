@@ -8,6 +8,7 @@ class ShippingRateService {
     async getAll() {
         try {
             return ShippingRate.findAll({
+                where: { status: 1 },
                 raw: true
             })
         } catch (error) {

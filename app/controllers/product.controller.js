@@ -20,7 +20,11 @@ module.exports = {
     createProduct: async (req, res) => {
         try {
 
+            console.log('bodyyyy', req.body.products)
             const newItem = await Product.createProduct(req.body.products);
+            if (!newItem.length) {
+                return res.status(400).json(ApiResponse.error("No items were added!"));
+            }
             res.status(201).json(ApiResponse.success(newItem, 'Products added!'))
 
         } catch (error) {
@@ -32,6 +36,21 @@ module.exports = {
 
     updateProduct: async (req, res) => {
         try {
+
+            const exists = await Product.getProductByID(req.params.id);
+            if (!exists) {
+                return res.status(400).json(ApiResponse.error("Product ID does not exists!"));
+            }
+
+            if (!exists.status) {
+                return res.status(400).json(ApiResponse.error("Cannot update a deleted entity!"));
+            }
+
+            const whereClause = { name: req.body.name, price: req.body.price, country: req.body.country, status: 1 }
+            const duplicate = await Product.getProducts(whereClause);
+            if (duplicate.length) {
+                return res.status(400).json(ApiResponse.error("A product already exists with same details!"));
+            }
 
             const updatedItem = await Product.updateProduct(req.params.id, req.body);
             res.status(200).json(ApiResponse.success(updatedItem, 'Products updated!'))
@@ -45,6 +64,11 @@ module.exports = {
 
     deleteProduct: async (req, res) => {
         try {
+
+            const exists = await Product.getProductByID(req.params.id);
+            if (!exists) {
+                return res.status(400).json(ApiResponse.error("Product ID does not exists!"));
+            }
 
             const deletedItem = await Product.deleteProduct(req.params.id);
             res.status(200).json(ApiResponse.success(deletedItem, 'Products deleted!'))
