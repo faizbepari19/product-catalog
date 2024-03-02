@@ -15,9 +15,12 @@ class InvoiceCalculator {
     calculateShippingFees() {
 
         const totalWeight = this.products.reduce((sum, product) => sum + product.weight  * product.quantity, 0);
-        
-        return (totalWeight / 100) * this.shippingRate.rate;
+        let shippingFees = (totalWeight / 100) * this.shippingRate.rate;
 
+        // Apply maximum discount of 100 INR on shipping fees
+        shippingFees = Math.max(shippingFees - 100, 0);
+
+        return shippingFees;
     }
 
     applyDiscount() {
