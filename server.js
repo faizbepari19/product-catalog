@@ -1,4 +1,7 @@
 const express = require("express");
+const helmet = require('helmet');
+const csrf = require('csurf');
+const cookieParser = require('cookie-parser');
 
 const { monitorMetrics, getMetrics } = require('./app/middlewares/monitor')
 const dotenv = require("dotenv");
@@ -9,6 +12,12 @@ const app = express();
 
 // parse requests of content-type - application/json
 app.use(express.json());
+
+//Helmet removes X-Powered-By header.
+//By removing the X-Powered-By header, you reduce the information exposed about the server's underlying technology stack, which is considered good practice for security reasons.
+app.use(helmet());
+// app.use(cookieParser());
+// app.use(csrf({ cookie: true, httpOnly: true, secure: false, sameSite: 'None' }));
 
 app.use(monitorMetrics)
 
