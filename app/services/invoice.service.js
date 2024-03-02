@@ -18,7 +18,7 @@ class InvoiceCalculator {
         let shippingFees = (totalWeight / 100) * this.shippingRate.rate;
 
         // Apply maximum discount of 100 INR on shipping fees
-        shippingFees = Math.max(shippingFees - 100, 0);
+        shippingFees = Math.max(shippingFees - (this.products.length >= 2 ? 100 : 0), 0);
 
         return shippingFees;
     }
