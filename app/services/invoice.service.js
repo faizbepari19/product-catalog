@@ -55,7 +55,7 @@ class InvoiceCalculator {
 
     calculateTax() {
         const gst = (this.taxation.tax_percentage / 100);
-        return (this.calculateSubtotal() *  gst ) - this.applyDiscount() + this.calculateShippingFees();
+        return (this.calculateSubtotal() *  gst ) // - this.applyDiscount() + this.calculateShippingFees();
     }
 
     calculateTotal() {
