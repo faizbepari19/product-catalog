@@ -1,5 +1,5 @@
 # Use an official Node.js runtime as a parent image
-FROM node:20.11.1-bookworm-slim
+FROM node:20.19.2-bookworm-slim
 
 # Set the working directory to /app
 WORKDIR /app
